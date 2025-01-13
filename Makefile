@@ -1,25 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -g
 
-# target executable
-TARGET = client
-
-# src files
-SRCS = client.c proxy.c server.c
-
-# object files
-OBJS = client.o proxy.o server.o
-
 # default target
-all: $(TARGET)
+all: $(SERVER) $(CLIENT)
 
-# build the executable
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+client: client.c
+	$(CC) $(CFLAGS) client.c -o client
 
-# build the object files
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+server: server.c
+	$(CC) $(CFLAGS) server.c -o server
 
 # clean up generated files
 clean:
