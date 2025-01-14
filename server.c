@@ -67,12 +67,14 @@ int connect_to_client() {
             printf("[SERVER] EOF\n");
             break;
         }
-        printf("[SERVER] Received: %s, from client\n", buffer);
+        // printf("[SERVER] val_read: %d\n", val_read);
+        printf("[SERVER] Received: \"%s\", from client\n", buffer);
+    
+        char* msg_to_client = "[SERVER] Hello from Server!";
+        send(new_socket, msg_to_client, strlen(msg_to_client), 0);
+        printf("[SERVER] Sent hello message\n");
     }
 
-    char* msg_to_client = "[SERVER] Hello from Server!";
-    send(new_socket, msg_to_client, sizeof(msg_to_client), 0);
-    printf("[SERVER] Sent hello message\n");
 
     close(new_socket);
     close(sock_fd);

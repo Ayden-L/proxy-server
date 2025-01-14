@@ -12,7 +12,7 @@
 
 #define BUFFER_SIZE 1024
 #define INITIAL_ARRAY_SIZE 10
-#define PORT 8000
+#define PORT 9090
 // #define DEBUG
 
 char **lines = NULL;                        // Array to store lines
@@ -147,7 +147,7 @@ int connect_to_server() {
     printf("[CLIENT] Connected to server\n");
 
     // send a test message to server
-    char* test_message = "[CLIENT] Hello server, this is the client speaking";
+    char* test_message = "Hello server, this is the client speaking";
     send(sock_fd, test_message, strlen(test_message), 0);
     printf("[CLIENT] Message was sent to server: %s\n", test_message);
 

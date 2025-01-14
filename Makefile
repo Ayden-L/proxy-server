@@ -2,7 +2,9 @@ CC = gcc
 CFLAGS = -Wall -g
 
 # default target
-all: $(SERVER) $(CLIENT)
+all:
+	$(SERVER) 
+	$(CLIENT)
 
 client: client.c
 	$(CC) $(CFLAGS) client.c -o client
