@@ -15,11 +15,12 @@
 #define PORT 9090
 // #define DEBUG
 
-char **lines = NULL;                        // Array to store lines
+char **database = NULL;                     // Array to store database
+int db_size;                                // Size of database
 int db_fd;                                  // File descriptor
 ssize_t bytes_read;                         // Number of bytes read
 char buffer[BUFFER_SIZE];                   // Buffer for reading file data
-size_t line_count = 0;                      // Number of lines
+size_t line_count = 0;                      // Number of database
 size_t array_size = INITIAL_ARRAY_SIZE;     // Current array capacity
 char *line_buffer = NULL;                   // Temporary buffer to store a single line
 size_t line_length = 0;                     // Length of the current line
@@ -34,8 +35,8 @@ int populate_db() {
     }
 
     // Allocate memory for the initial array
-    lines = malloc(array_size * sizeof(char *));
-    if (lines == NULL) {
+    database = malloc(array_size * sizeof(char *));
+    if (database == NULL) {
         perror("[CLIENT] Memory allocation failed");
         close(db_fd);
         return -EXIT_FAILURE;
@@ -59,21 +60,22 @@ int populate_db() {
                 // Add the line to the array
                 if (line_count >= array_size) {
                     array_size *= 2; // Double the array size
-                    char **new_lines = realloc(lines, array_size * sizeof(char *));
-                    if (!new_lines) {
+                    char **new_database = realloc(database, array_size * sizeof(char *));
+                    if (!new_database) {
                         perror("[CLIENT] Memory allocation failed");
                         free(new_line);
                         free(line_buffer);
                         return -EXIT_FAILURE;
                     }
-                    lines = new_lines;
+                    database = new_database;
                 }
-                lines[line_count++] = new_line;
+                database[line_count++] = new_line;
 
                 // Reset line buffer for the next line
                 free(line_buffer);
                 line_buffer = NULL;
                 line_length = 0;
+                db_size += 1;
             } else {
                 // Append character to the current line
                 char *new_buffer = realloc(line_buffer, line_length + 1);
@@ -98,8 +100,9 @@ int populate_db() {
         }
         memcpy(new_line, line_buffer, line_length);
         new_line[line_length] = '\0'; // Null-terminate the line
-        lines[line_count++] = new_line;
+        database[line_count++] = new_line;
         free(line_buffer);
+        db_size += 1;
     }
 
     if (bytes_read == -1) {
@@ -108,7 +111,7 @@ int populate_db() {
     }
 
     // for (int i = 0; i < 10; i++) {
-    //     printf("Line: %s\n", lines[i]);
+    //     printf("Line: %s\n", database[i]);
     // }
 
     return EXIT_SUCCESS;
@@ -147,10 +150,16 @@ int connect_to_server() {
     printf("[CLIENT] Connected to server\n");
 
     // send a test message to server
-    char* test_message = "Hello server, this is the client speaking";
-    send(sock_fd, test_message, strlen(test_message), 0);
-    printf("[CLIENT] Message was sent to server: %s\n", test_message);
-
+    printf("[CLIENT] db_size: %d\n", db_size);
+    for (int i = 0; i < db_size; i++) {
+        // char* data = (char*) malloc(strlen(database[i]) + 1);
+        // strcpy(data, database[i]);
+        // data[strlen(database[i])] = '\0';
+        char* data = "blah";
+        send(sock_fd, data, strlen(data), 0);
+        // printf("[CLIENT] strlen(database[i]): %d\n", strlen(database[i]));
+        // printf("[CLIENT] Message was sent to server: %s\n", database[i]);
+    }
 
     char* response_buffer = (char*) malloc(BUFFER_SIZE);
     if (!response_buffer) {
@@ -183,8 +192,8 @@ int main(int argc, char** argv) {
 
     close(db_fd);
     for(ssize_t i = 0; i < line_count; i++) {
-        free(lines[i]);
+        free(database[i]);
     }
-    free(lines);
+    free(database);
 
 }

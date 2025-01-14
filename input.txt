@@ -1,6 +1,6 @@
-www.google.com
-www.rutgers.edu
-www.youtube.com
-www.princeton.edu
-www.facebook.com
-ebay.com
+www.google.com it
+www.rutgers.edu rt
+www.youtube.com rt
+www.princeton.edu rt
+www.facebook.com it
+ebay.com rt
